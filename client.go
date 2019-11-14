@@ -1,6 +1,7 @@
 package mob_smssdk
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -18,9 +19,13 @@ type MobSmsSdkClient struct {
 	VerifyURL  string
 	AppKey     string
 }
+
 func NewMobSmsSdk(appKey string) *MobSmsSdkClient {
 	result := &MobSmsSdkClient{AppKey: appKey}
-	result.HttpClient = http.DefaultClient
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	result.HttpClient = &http.Client{Transport: tr}
 	result.VerifyURL = verifyURL
 	return result
 }
